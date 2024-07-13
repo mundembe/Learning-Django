@@ -1,0 +1,239 @@
+⁡⁣⁢⁢--------------------------------------------------------------------------------------------
+Terminology
+--------------------------------------------------------------------------------------------⁡
+𝗗𝗷𝗮𝗻𝗴𝗼 𝗣𝗿𝗼𝗷𝗲𝗰𝘁:
+    collection of applications and configurations that form a full web application
+𝗗𝗷𝗮𝗻𝗴𝗼 𝗮𝗽𝗽𝗹𝗶𝗰𝗮𝘁𝗶𝗼𝗻:
+    Is a part of the project.
+    Performs a specific task/function.
+    can be reused/plugged into other Django Projects.
+
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+Creating a PROJECT
+----------------------------------------------------------------------------------------------⁡
+After creating a virtual env using $⁡⁢⁢⁢conda create --name MyDjangoEnv django⁡,
+create a project using $⁡⁢⁢⁢django-admin startproject projectname⁡
+This will create a 𝗺𝗮𝗻𝗮𝗴𝗲.𝗽𝘆 file:
+    associated with the commands you use in the project 
+    like building and running your application
+and a project folder with:
+    __𝗶𝗻𝗶𝘁__.𝗽𝘆: 
+        an empty file
+        the file name __𝘪𝘯𝘪𝘵__ allows the directory to be treated as a package
+    𝗮𝘀𝗴𝗶.𝗽𝘆:
+    𝘀𝗲𝘁𝘁𝗶𝗻𝗴𝘀.𝗽𝘆
+    𝘂𝗿𝗹𝘀.𝗽𝘆:
+        stores url link which are used inside the project
+        uses alot of regular expressions
+    𝘄𝘀𝗴𝗶.𝗽𝘆:
+        Web Server Gateway InterFace
+        Used for deploying project into production
+
+⁡⁣⁢⁢--------------------------------------------------------------------------------------------
+running the application
+--------------------------------------------------------------------------------------------⁡
+to run:
+    make sure you are in your project directory
+    use $⁡⁢⁢⁢python manage.py runsever⁡
+Migrations:
+    for moving databases from one design to another
+    a migration is also reversible
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+Creating an APPLICATION
+----------------------------------------------------------------------------------------------
+⁡creating an application:
+    make sure you are outside the project directory
+    run $⁡⁢⁢⁢Python manage.py startapp app_name⁡
+    inside the settings.py of thye project dir, 
+        append the name of this application to the INSTALLED_APPS list
+
+The following file are created as part of the application:
+    __𝗶𝗻𝗶𝘁__.py
+    admin.py: register your models and use them with djanjo's admin interface
+    apps.py: application specific configurations
+    models.py: store application's data models
+    tests.py: 
+    views.py: handles requests and responses; 
+              this is where we create our functions to be rendered on to the screen.
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+Views
+----------------------------------------------------------------------------------------------⁡
+Each view exists as an individual function within the app's views.py
+    each view (i.e.function) must return an HttpResponse object
+        ⁡⁢⁢⁢imported from django.http⁡
+    each view (i.e.function) must take atleast one argument, even if the arg is not used
+        By convention, this argument is 𝘳𝘦𝘲𝘶𝘦𝘴𝘵 
+    eg: 
+⁡⁢⁢⁢        from django.http import HttpResponse
+        def my_view(request):
+            return HttpResponse("Hello World")⁡
+⁡⁣⁢⁢⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+Mapping view with URL
+----------------------------------------------------------------------------------------------⁡
+to use a view from an app,
+Import the views.py into the project's urls.py
+    ⁡⁢⁢⁢from my_app import ⁡⁢⁢⁢views⁡
+Append the view into the urlpatterns list
+    ⁡⁣⁢⁢method 0⁡: use regular expressions 
+        ⁡⁢⁢⁢from django.conf.urls import url
+        then
+        url('^$', views.index, name='index')⁡⁢⁢⁢,⁡
+⁡⁢⁣⁢        django.conf,urls WAS DEPRECATED AFTER DJANGO 4
+⁡    ⁡⁣⁢⁢method ⁡⁣⁢⁢1A⁡⁡: use regular expressions 
+        ⁡⁢⁢⁡⁢⁢⁢from django.urls import re_path⁡
+        then    
+        ⁡⁢⁢⁢re_path('^$', views.index, name='index'),⁡
+        in this case, the view is a function called 𝘪𝘯𝘥𝘦𝘹 which was defined in views.py
+        the name of this veiw will also be 𝘪𝘯𝘥𝘦𝘹
+        don't forget the comma after appending the url
+    ⁡⁣⁢⁢method ⁡⁣⁢⁢1B⁡⁡: use path
+        map the app to the project's urlpatterns list
+            ⁡⁢⁢⁢from django.urls import path⁡
+            then
+            ⁡⁢⁢⁢path("", views.view_one),⁡
+    ⁡⁣⁢⁢method 2A⁡: modular approach
+        manually create a url.py file in your app
+            in the app's url.py:
+                ⁡⁢⁢⁢from django.urls import re_path
+                from first_app import views
+                urlpatterns = [
+                    re_path(r'$', views.index, name="index"),
+                ]
+                #the dollar sign$ represents the domain name that hosts the app
+            then in your then in your project's urls.py:
+                ⁡⁢⁢⁢from django.urls import re_path, include
+                urlpatterns [
+                    url(r'^first_project/', include("first_app.urls"))
+                ]⁡
+        using this method, all of the views that were mapped in the included app 
+        are usable. therefore it is easier to implement the app into your project 
+        without having to worry about the individual views.
+    
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+Templates
+----------------------------------------------------------------------------------------------⁡
+
+inside of your project's directory create a directory for all templates.
+    i.e. first_project/templates/first_app
+then edit the DIR key of the TEMPLATES dictionary inside of the project's settings.py
+    there is an issue though:
+        we want the Django project to be easily transferrable between diffferent computers
+        which use diffferent file systems
+        However, the DIR key entry needs hardcoded path
+        To solve this,
+        Use ⁡⁢⁢⁢Python's 𝗼𝘀 module which dynamically generates the correct file path strings
+            import os
+            the BASE_DIR variables contains the file path of the project 
+                i.e. C:\𝘜𝘴𝘦𝘳𝘴\𝘗𝘶𝘣𝘭𝘪𝘤\𝘗𝘳𝘰𝘫𝘦𝘤𝘵𝘴\𝘜𝘥𝘦𝘮𝘺_𝘍𝘶𝘭𝘭_𝘚𝘵𝘢𝘤𝘬\𝘋𝘫𝘢𝘯𝘨𝘰_1\𝘢𝘯𝘰𝘵𝘩𝘦𝘳_𝘱𝘳𝘰𝘫𝘦𝘤𝘵\𝘢𝘯𝘰𝘵𝘩𝘦𝘳_𝘱𝘳𝘰𝘫𝘦𝘤𝘵
+            represent the templates dir this way:
+                TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+    now you can append TEMPLATES_DIR to the DIR key in the TEMPLATES dictionary.
+        templates{
+            "DIRS": ["TEMPLATES_DIR",]
+        }
+create an HTML file inside the first_project/templates/first_app directory
+    insert template tags (aka Django template variables)
+        
+    template variables allow you to inject HTML directly from django
+    inside the html file:
+        <html>
+            <body>
+                <h1> Standard html code</h1>
+                {{ my_template_variable }}
+            </body>
+        </html>
+    then inside the views.py:
+            def home(request):
+                my_variables = {"my_template_variable" : "this is variabe1",}
+                return render(request, 'first_app/index.html', context=my_variables)
+    the template variabe will be injected into the html file, thus the page reads:
+        𝘚𝘵𝘢𝘯𝘥𝘢𝘳𝘥 𝘩𝘵𝘮𝘭 𝘤𝘰𝘥𝘦
+        𝘵𝘩𝘪𝘴 𝘪𝘴 𝘷𝘢𝘳𝘪𝘢𝘣𝘦1
+----------------------------------------------------------------------------------------------
+𝗦𝘁𝗮𝘁𝗶𝗰 𝗙𝗶𝗹𝗲𝘀
+----------------------------------------------------------------------------------------------
+Static file are files that don't change, e.g. media file, css/js scripts, text files/tables
+To display A Simple static file:
+    Create a new directory inside the Top Level Directory (just like we did with Templates)
+        call it 𝙨𝙩𝙖𝙩𝙞𝙘
+    Add the directory path to the project's settings.py
+        STATIC_DIR = os.path.join(BASE_DIR, "static")
+    Specify the url on which static files can be accessed
+        Add a STATIC_URL variable (from Django 1.9 and up, this var is created automatically):
+            STATIC_URL = "/static/"
+    Make a list that stores the file paths of all your the dirs in which your static files are 
+    stored (this is useful if your project has many apps)
+        STATICFILES_DIRS = [ STATIC_DIR, ]
+    Storing the images:
+        create a dir called 𝘪𝘮𝘢𝘨𝘦𝘴 inside the 𝙨𝙩𝙖𝙩𝙞𝙘 dir
+        place the JPEG image here
+    In the template (i.e. the html file):
+        load the static files by adding this BELOW <!DOCTYPE html>:
+            {% load staticfiles %}
+        insert the image:
+            <img src="{% static "images/my_img.jpg" %}" alt="no image" /> 
+        to use a static script:
+            <link rel="stylesheet" href="{% static "stylesheets/my_stlye.css" %}" />
+            the '𝘴𝘵𝘺𝘭𝘦𝘴𝘩𝘦𝘦𝘵𝘴' dir must be in the ./myProject/static/ dir alongside the 𝘪𝘮𝘢𝘨𝘦𝘴 dir
+    notice: 
+            {{}} is for injecting simple text
+            {%%} is for injecting logic and complex injection
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+DJANGO PART 2
+----------------------------------------------------------------------------------------------⁡
+⁡⁣⁢⁢----------------------------------------------------------------------------------------------
+MODELS
+----------------------------------------------------------------------------------------------⁡
+Websites should be able to: 
+    accept user input
+    and feed it into a database,
+    then Retrieve infomation from a database
+    and use it to Generate content for the website.
+Models are used incorparate databases into a Django project
+Django has SQLite installed by default
+    you can change the engine you want to use
+    by editting the ENGINE parameter in settings.py
+⁡⁣⁢⁢To create a model:⁡
+    add a model as a class structure in the app's models.py file, 
+        all models inherit from Django's built-in django.db.models.Models class
+                ⁡⁢⁢⁢class my_model(models.Model):⁡
+    each attribute of this class represents a field (which is just like a column name in SQL)
+        ⁡⁢⁢⁢class my_model1(models.Model):
+            my_field = CharField(max_length=264, unique=true)⁡
+    add a __str__ function which will return the name of the main field
+        inside the class structure of the model:
+            ⁡⁢⁢⁢def __str__(self):
+                return self.my_field⁡
+    Your database will have multiple model(aka tables),
+        these tables will be linked by a foreign key
+        for example
+            to specify that the field called other_field in the second model is the foreign key that is
+            associated with the primary key called my_field of the first model(i.e. my_model):
+                ⁡⁢⁢⁢second_model(models.Model):
+                    other_field = models.ForeignKey(my_model)
+                    second_column_field = CharField.(max_length=200)
+                    some_link = models.URLField(unique=true)⁡
+⁡⁣⁢⁢'Migrating':⁡
+    after setting up the model, we can migrate the database
+    this is the process in which Django creates SQL databases that correspond 
+    to the models we created
+    use:
+        ⁡⁢⁢⁢python manage.py migrate⁡
+    then register the changes to your app:
+        ⁡⁢⁢⁢python manage.py makemigrations my_app⁡
+    after this, run this command again:
+        ⁡⁢⁢⁢python manage.py migrate⁡
+⁡⁣⁢⁢Admin interface:⁡
+    its more convenient interact with the db using django's admin interface.
+    Register the models to the app's admin.py file
+        ⁡⁢⁢⁢from django.contrib import admin
+        from my_app.models import my_model1, my_model2... ⁡⁢⁣⁣#from the app's models.py, import the models you needs⁡
+        ⁡⁢⁢⁢admin.site.register(my_model1)
+        admin.site.register(my_model2)⁡
+    create a superuser:
+        ⁡⁢⁢⁢python manage.py createsuperuser⁡
+'Faker'
+    once the database is set up, we can use the Faker library to populate the 
+    database with some testing data
+    create a script for this
+
